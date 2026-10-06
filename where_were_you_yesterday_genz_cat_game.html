@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where Were You Yesterday? 🐱</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:ui-rounded,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:linear-gradient(135deg,#ffeaf6,#eeeaff,#e7faff);
+  color:#29253b;
+  padding:18px;
+}
+.game{
+  width:min(720px,100%);
+  margin:auto;
+  background:linear-gradient(145deg,#fff5fb,#f4f1ff,#effcff);
+  border:4px solid white;
+  border-radius:30px;
+  padding:clamp(15px,4vw,30px);
+  box-shadow:0 12px 0 rgba(100,80,160,.13);
+  position:relative;
+  overflow:hidden;
+}
+h1{font-size:clamp(28px,8vw,44px);line-height:.98;margin:8px 0;font-weight:1000;letter-spacing:-1.5px}
+.gradient{
+  background:linear-gradient(90deg,#ff4fa3,#7668ff,#24bfdc);
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.sub{color:#77718b;font-weight:750}
+.hidden{display:none!important}
+.hero{text-align:center}
+.logo{font-size:52px}
+.tags{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:12px 0}
+.tag{background:white;border:2px solid #eee8ff;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:950}
+.info{
+  background:white;border-radius:18px;padding:15px;text-align:left;
+  color:#716b82;font-size:14px;line-height:1.55;
+  box-shadow:0 5px 0 rgba(90,70,140,.07)
+}
+.info b{color:#393342}
+.primary{
+  width:100%;min-height:55px;margin-top:13px;border:0;border-radius:17px;
+  background:linear-gradient(135deg,#ff62ac,#8070ff);
+  color:#fff;font:inherit;font-weight:1000;font-size:17px;
+  box-shadow:0 6px 0 #d44c97;cursor:pointer
+}
+.primary:active{transform:translateY(4px);box-shadow:0 2px 0 #d44c97}
+.meme{
+  width:min(245px,70vw);height:220px;object-fit:cover;
+  margin:15px auto;border-radius:22px;border:5px solid white;
+  box-shadow:0 7px 0 rgba(90,70,140,.12);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background:#f7f2ff
+}
+.cat{
+  font-size:120px;line-height:1;
+  filter:drop-shadow(0 6px 3px rgba(0,0,0,.08))
+}
+.meme-caption{font-weight:1000;font-size:15px;margin-top:-8px;color:#5f5870}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stat{
+  background:#fff;border:2px solid #eee8ff;border-radius:16px;
+  padding:9px;text-align:center
+}
+.stat b{display:block;font-size:19px;font-weight:1000}
+.stat span{font-size:9px;font-weight:900;color:#898398;text-transform:uppercase}
+.progress{height:8px;background:#e6e2f2;border-radius:99px;margin:12px 0;overflow:hidden}
+.bar{height:100%;width:10%;background:linear-gradient(90deg,#ff70b5,#8172ff,#5ed8ef);transition:.25s}
+.level{text-align:center;margin-bottom:10px}
+.pill{
+  display:inline-block;background:#fff0a7;border:2px solid #fff;
+  border-radius:99px;padding:6px 12px;font-size:11px;font-weight:1000
+}
+.qcard{
+  background:#fff;border-radius:22px;padding:18px;text-align:center;
+  box-shadow:0 6px 0 rgba(90,70,140,.08)
+}
+.question{font-size:clamp(20px,5vw,29px);font-weight:1000;line-height:1.2}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.answer{
+  min-height:62px;border:3px solid white;border-radius:17px;
+  background:#faf8ff;color:#302c42;font:inherit;font-size:15px;
+  font-weight:850;padding:10px;box-shadow:0 5px 0 #ddd7ed;cursor:pointer
+}
+.answer:active{transform:translateY(3px);box-shadow:0 2px 0 #ddd7ed}
+.answer.correct{background:#caffdf;border-color:#63d795;color:#14663a;box-shadow:0 5px 0 #46b978}
+.answer.wrong{background:#ffd7df;border-color:#ff7187;color:#8e2940;box-shadow:0 5px 0 #e9556b}
+.feedback{text-align:center;min-height:27px;margin:10px 0;font-weight:1000}
+.good{color:#159452}.bad{color:#df4760}
+.reaction{width:155px;height:145px;margin:8px auto;border-radius:18px;background:#fff;border:4px solid white;box-shadow:0 5px 0 rgba(90,70,140,.12);display:flex;align-items:center;justify-content:center}
+.reaction .cat{font-size:85px}
+.result{text-align:center}
+.result h2{font-size:30px;font-weight:1000}
+.bigscore{
+  font-size:70px;font-weight:1000;
+  background:linear-gradient(90deg,#ff54a5,#776cff,#26bfdc);
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.form{
+  background:#fff;border-radius:20px;padding:15px;text-align:left;
+  display:grid;gap:10px;margin-top:15px
+}
+label{font-size:12px;font-weight:1000}
+input{
+  width:100%;min-height:48px;margin-top:4px;border:2px solid #e5def5;
+  border-radius:13px;padding:10px;font:inherit;font-size:16px
+}
+.record{background:#e8fff1;border-radius:12px;padding:10px;color:#167446;font-size:13px;font-weight:800}
+@media(max-width:520px){.answers{grid-template-columns:1fr}.game{border-radius:22px;padding:14px}}
+</style>
+</head>
+<body>
+<div class="game">
+
+<section id="start" class="hero">
+  <div class="logo">🐈‍⬛💅</div>
+  <h1><span class="gradient">WHERE WERE YOU</span><br>YESTERDAY?</h1>
+  <p class="sub">Year 3 English • Unit 8 • Speaking</p>
+
+  <div class="meme">
+    <div>
+      <div class="cat">🙀</div>
+      <div class="meme-caption">POV: teacher asks where you were yesterday</div>
+    </div>
+  </div>
+
+  <div class="tags">
+    <span class="tag">🐱 CAT MEMES</span>
+    <span class="tag">💀 CHAOS</span>
+    <span class="tag">❤️ 3 LIVES</span>
+    <span class="tag">🔥 10 Qs</span>
+  </div>
+
+  <div class="info">
+    <b>POV: you have an English quiz but suddenly forgot English. 😭</b><br>
+    Choose the correct sentence using <b>was / were</b>.
+    The cat is watching. 👁️👄👁️
+  </div>
+
+  <button id="startBtn" class="primary">🐾 START THE QUIZ</button>
+</section>
+
+<section id="quiz" class="hidden">
+  <div class="stats">
+    <div class="stat"><b id="qn">1/10</b><span>Question</span></div>
+    <div class="stat"><b id="sc">0</b><span>Points</span></div>
+    <div class="stat"><b id="lv">❤️❤️❤️</b><span>Lives</span></div>
+  </div>
+
+  <div class="progress"><div id="bar" class="bar"></div></div>
+  <div class="level"><span id="level" class="pill">LEVEL 1 • EASY</span></div>
+
+  <div class="qcard">
+    <div style="font-size:28px">🐱💭</div>
+    <div id="question" class="question"></div>
+  </div>
+
+  <div id="answers" class="answers"></div>
+  <div id="feedback" class="feedback"></div>
+
+  <div id="reaction" class="reaction hidden">
+    <div class="cat" id="reactionCat">😿</div>
+  </div>
+
+  <button id="next" class="primary" disabled>NEXT ➜</button>
+</section>
+
+<section id="result" class="result hidden">
+  <h2>YOU SURVIVED 😭🏆</h2>
+
+  <div class="meme">
+    <div>
+      <div class="cat">😼</div>
+      <div class="meme-caption">the cat approves... maybe</div>
+    </div>
+  </div>
+
+  <p style="color:#77718b;font-weight:800">
+    The cat has judged your English.
+  </p>
+
+  <div id="final" class="bigscore">0/100</div>
+  <p id="message"></p>
+
+  <div class="form">
+    <div>
+      <label>👤 NAME</label>
+      <input id="name" placeholder="Your name...">
+    </div>
+
+    <div>
+      <label>🏫 CLASS</label>
+      <input id="className" placeholder="e.g. 3 Bakti">
+    </div>
+
+    <div>
+      <label>⭐ SCORE</label>
+      <input id="scoreField" readonly>
+    </div>
+
+    <div>
+      <label>💯 PERCENTAGE</label>
+      <input id="percentage" readonly>
+    </div>
+
+    <button id="record" class="primary">📤 RECORD SCORE</button>
+    <div id="recordMsg" class="record hidden"></div>
+
+    <button id="again" class="primary"
+      style="background:#fff;color:#6759bd;box-shadow:0 5px 0 #ddd7ef">
+      🔄 RUN IT BACK
+    </button>
+  </div>
+</section>
+
+</div>
+
+<script>
+const questions=[
+["Where were you yesterday?",
+["I was at the shopping centre.","I were at the shopping centre.","I am at the shopping centre.","I is at the shopping centre."],0,1],
+["Where was Ali yesterday?",
+["He were at the library.","He was at the library.","He are at the library.","He am at the library."],1,1],
+["Where were Sara and Mei yesterday?",
+["They was at the park.","They is at the park.","They were at the park.","They am at the park."],2,1],
+["Choose the correct sentence.",
+["We was at the swimming pool yesterday.","We were at the swimming pool yesterday.","We are at the swimming pool yesterday.","We is at the swimming pool yesterday."],1,2],
+["Yesterday, Tom ___ at the hospital.",
+["were","are","was","am"],2,2],
+["Yesterday, my friends ___ at the cinema.",
+["was","were","is","am"],1,2],
+["Which answer is best? “Where were you yesterday?”",
+["I were at home in the morning.","I was at home in the morning.","I am at home yesterday.","I is at home in the morning."],1,3],
+["Which sentence is correct?",
+["Mina and I was at the museum yesterday.","Mina and I is at the museum yesterday.","Mina and I were at the museum yesterday.","Mina and I am at the museum yesterday."],2,3],
+["Complete: “Where ___ your parents yesterday?”",
+["was","were","is","am"],1,3],
+["Choose the best response: “Where was Adam last night?”",
+["He were at home.","He was at home.","He was at home yesterday are.","He were home."],1,3]
+];
+
+let i=0,score=0,lives=3,answered=false;
+
+const $=id=>document.getElementById(id);
+
+function sound(type){
+  try{
+    const Audio=window.AudioContext||window.webkitAudioContext;
+    if(!Audio)return;
+    const audio=new Audio();
+    const notes=type==="good"?[660,830,990]:type==="bad"?[190,140]:[392,523,659,784];
+    notes.forEach((freq,n)=>{
+      const osc=audio.createOscillator();
+      const gain=audio.createGain();
+      const t=audio.currentTime+n*.08;
+      osc.frequency.value=freq;
+      osc.type="sine";
+      gain.gain.setValueAtTime(.001,t);
+      gain.gain.exponentialRampToValueAtTime(.08,t+.02);
+      gain.gain.exponentialRampToValueAtTime(.001,t+.16);
+      osc.connect(gain);
+      gain.connect(audio.destination);
+      osc.start(t);
+      osc.stop(t+.17);
+    });
+  }catch(e){}
+}
+
+function render(){
+  answered=false;
+  $("next").disabled=true;
+  $("reaction").classList.add("hidden");
+  $("feedback").textContent="";
+
+  const q=questions[i];
+
+  $("qn").textContent=(i+1)+"/10";
+  $("sc").textContent=score;
+  $("lv").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);
+  $("bar").style.width=((i+1)*10)+"%";
+
+  $("level").textContent=
+    q[3]===1?"LEVEL 1 • EASY":
+    q[3]===2?"LEVEL 2 • MEDIUM":
+    "LEVEL 3 • HARD";
+
+  $("question").textContent=q[0];
+
+  const box=$("answers");
+  box.innerHTML="";
+
+  q[1].forEach((text,n)=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.className="answer";
+    button.textContent=text;
+    button.addEventListener("click",()=>answer(n,button));
+    box.appendChild(button);
+  });
+}
+
+function answer(n,button){
+  if(answered)return;
+  answered=true;
+
+  const q=questions[i];
+  const buttons=[...$("answers").children];
+  buttons.forEach(b=>b.disabled=true);
+
+  if(n===q[2]){
+    score+=10;
+    button.classList.add("correct");
+    $("feedback").textContent="💅 ATE. NO CRUMBS.";
+    $("feedback").className="feedback good";
+    $("reactionCat").textContent="😼";
+    $("reaction").classList.remove("hidden");
+    sound("good");
+  }else{
+    lives--;
+    button.classList.add("wrong");
+    buttons[q[2]].classList.add("correct");
+    $("feedback").textContent="😭 THE CAT IS DISAPPOINTED.";
+    $("feedback").className="feedback bad";
+    $("reactionCat").textContent="🙀";
+    $("reaction").classList.remove("hidden");
+    sound("bad");
+  }
+
+  $("sc").textContent=score;
+  $("lv").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);
+
+  $("next").disabled=false;
+
+  if(lives===0){
+    $("next").textContent="CAT HAS SPOKEN 🐈 ➜";
+  }
+}
+
+function finish(){
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
+
+  $("final").textContent=score+"/100";
+  $("scoreField").value=score+"/100";
+  $("percentage").value=score+"%";
+
+  $("message").textContent=
+    score>=80?"NO NOTES. YOU ATE. 💅🔥":
+    score>=50?"The cat kinda approves. 🐈‍⬛":
+    "The cat said RUN IT BACK. 😭📚";
+
+  sound("win");
+}
+
+$("startBtn").addEventListener("click",()=>{
+  $("start").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  i=0;score=0;lives=3;
+  render();
+  sound("win");
+});
+
+$("next").addEventListener("click",()=>{
+  if(lives===0 || i===questions.length-1){
+    finish();
+  }else{
+    i++;
+    render();
+  }
+});
+
+$("record").addEventListener("click",()=>{
+  const name=$("name").value.trim();
+  const cls=$("className").value.trim();
+
+  $("recordMsg").classList.remove("hidden");
+
+  if(!name || !cls){
+    $("recordMsg").textContent="😭 Enter your name + class first bestie.";
+    return;
+  }
+
+  $("recordMsg").textContent=
+    "✅ "+name+" • "+cls+" • "+score+"/100 • "+score+
+    "% — result prepared. Connect a Google Apps Script URL to send it to Google Sheets.";
+});
+
+$("again").addEventListener("click",()=>{
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
+  i=0;score=0;lives=3;
+  render();
+});
+</script>
+</body>
+</html>
